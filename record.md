@@ -132,3 +132,14 @@ Phase18(Architecture) 커리큘럼 전 항목 완료: Layered/Hexagonal/Clean Ar
 - Docker Desktop 최초 기동이 오래 걸려서(엔진 파이프 안 뜸) 대기하는 동안 CI/CD(`​.github/workflows/ci.yml` 신규, 내가 작성 - checkout → setup-java 17 → `./gradlew test`)를 먼저 작성. 단, 프로젝트가 git repo 아니라서(`git init` 안 된 상태) 실제 트리거 검증은 못 함 - 사용자에게 지금 git init할지 나중에 할지 물어본 상태(응답 대기 중).
 - Docker Desktop 기동 완료 후 `docker compose build app` 성공, `docker compose up -d`로 app+redis 기동, 호스트에서 `curl localhost:8080/health` 200 UP 확인. `docker compose stop app`으로 실제 SIGTERM 보내서 shutdown hook 로그(Tomcat → JPA EntityManagerFactory → HikariCP 순서로 정리) 실증 확인. `docker compose down`으로 정리.
 - 남은 Phase19 항목: Nginx, CI/CD(git init 여부 확정 후 마무리), Tracing, Monitoring, 장애 대응.
+
+## 2026-08-18 - Phase 19 계속 (Git 초기화 + CI/CD 실증)
+
+### Input
+GitHub repo(oceanfromthewave/realBack) 생성 완료, URL 제공.
+
+### Output
+- `.gitignore` 신규(build/.gradle/.idea/tomcat.*/logs 제외).
+- `git init`, 최초 커밋(Phase 0~19 진행분 전체, 181 files), `git remote add origin` + `git push -u origin main`.
+- CI 실제 트리거 확인: push -> Actions 실행 -> `test` job 성공(42s). `setup-java@v4` deprecated 경고 있어서 `@v5`로 바로 수정, 재푸시 후 재확인 성공.
+- CI/CD 항목 완료. 남은 Phase19: Nginx, Tracing, Monitoring, 장애 대응.
