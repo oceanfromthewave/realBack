@@ -143,3 +143,16 @@ GitHub repo(oceanfromthewave/realBack) 생성 완료, URL 제공.
 - `git init`, 최초 커밋(Phase 0~19 진행분 전체, 181 files), `git remote add origin` + `git push -u origin main`.
 - CI 실제 트리거 확인: push -> Actions 실행 -> `test` job 성공(42s). `setup-java@v4` deprecated 경고 있어서 `@v5`로 바로 수정, 재푸시 후 재확인 성공.
 - CI/CD 항목 완료. 남은 Phase19: Nginx, Tracing, Monitoring, 장애 대응.
+
+## 2026-08-18 - Phase 19 계속 (Nginx)
+
+### Input
+"nginx 진행" 없이 순서대로 이어서 진행(Docker/CI 다음 항목).
+
+### Output
+- `nginx.conf` 신규(내가 작성) - `app:8080` upstream, `/` proxy_pass, `X-Real-IP`/`X-Forwarded-For` 헤더 전달.
+- `docker-compose.yml` 수정: `app` 서비스는 `ports` -> `expose`로 변경(호스트에 직접 안 뚫림), `nginx` 서비스 신규 추가(호스트 8081 -> 컨테이너 80, `nginx.conf` 마운트).
+- 검증: `docker compose up -d` 후 `curl localhost:8081/health`(nginx 경유) 200 UP, `curl localhost:8080/health`(app 직접) 연결 거부 확인 - reverse proxy 뒤로 앱이 숨겨진 거 실증.
+- 호스트 80 포트가 이미 다른 프로세스(Windows)에 점유돼있어서 데모용으로 8081 사용.
+- git commit/push 완료(931e646 -> d186ea5).
+- 남은 Phase19: Tracing, Monitoring, 장애 대응.
